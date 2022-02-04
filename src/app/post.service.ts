@@ -14,30 +14,24 @@ export class PostService {
   createAndStorePost(title: string, content: string) {
     const postData: Post = {title: title, content: content};
 
-    this.httpClient.post<{ name: string }>(
-      this.url,
-      postData
-    ).subscribe(responseData => {
+    this.httpClient.post<{ name: string }>(this.url, postData)
+      .subscribe(responseData => {
       console.log(responseData);
     });
   }
 
   fetchPosts() {
-    this.httpClient.get<{ [key: string]: Post }>(
-      this.url
-    ).pipe(map(responseData => {
-      const postArray: Post[] = []; // transforme la réponse en tableau
-      for(const key in responseData) {
-        if(responseData.hasOwnProperty(key)) {
-          // pour chaque élément, crée un objet avec les mêmes données (clé/valeur) + rajoute l'id unique
-          postArray.push({ ...responseData[key], id: key });
+    return this.httpClient.get<{ [key: string]: Post }>(this.url)
+      .pipe(map(responseData => {
+        const postArray: Post[] = []; // transforme la réponse en tableau
+        for(const key in responseData) {
+          if(responseData.hasOwnProperty(key)) {
+            // pour chaque élément, crée un objet avec les mêmes données (clé/valeur) + rajoute l'id unique
+            postArray.push({ ...responseData[key], id: key });
+          }
         }
-      }
 
-      return postArray;
-    }))
-      .subscribe(posts => {
-
-      });
+        return postArray;
+    }));
   }
 }
