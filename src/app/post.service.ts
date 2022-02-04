@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Post} from "./post.model";
 import {map} from "rxjs/operators";
+import {Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
+  error = new Subject<string>();
+
   private url: string = 'https://angular-tuto-http-default-rtdb.europe-west1.firebasedatabase.app/posts.json';
 
   constructor(private httpClient: HttpClient) { }
@@ -15,9 +18,9 @@ export class PostService {
     const postData: Post = {title: title, content: content};
 
     this.httpClient.post<{ name: string }>(this.url, postData)
-      .subscribe(responseData => {
-      console.log(responseData);
-    });
+      .subscribe(responseData => console.log(responseData),
+        error => this.error.next(error.message)
+    );
   }
 
   fetchPosts() {
