@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,18 @@ export class AppComponent implements OnInit {
     this.httpClient.post(
       'https://angular-tuto-http-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
       postData
-    ).subscribe(responseData => {
+    )
+      .pipe(map(responseData => {
+        const postArray = [];
+        for(const key in responseData) {
+          if(responseData.hasOwnProperty(key)) {
+            postArray.push({ ...responseData[key], id: key });
+          }
+        }
+
+        return postArray;
+      }))
+      .subscribe(responseData => {
       console.log(responseData);
     });
   }
@@ -37,7 +49,18 @@ export class AppComponent implements OnInit {
   private fetchPosts() {
     this.httpClient.get(
       'https://angular-tuto-http-default-rtdb.europe-west1.firebasedatabase.app/posts.json'
-    ).subscribe(posts => {
+    ).pipe(map(responseData => {
+      const postArray = []; // transforme la réponse en tableau
+      for(const key in responseData) {
+        if(responseData.hasOwnProperty(key)) {
+          // pour chaque élément, crée un objet avec les mêmes données (clé/valeur) + rajoute l'id unique
+          postArray.push({ ...responseData[key], id: key });
+        }
+      }
+
+      return postArray;
+    }))
+      .subscribe(posts => {
       console.log(posts);
     });
   }
