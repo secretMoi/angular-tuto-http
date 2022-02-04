@@ -10,6 +10,7 @@ import {Post} from "./post.model";
 })
 export class AppComponent implements OnInit {
   loadedPosts: Post[] = [];
+  isFetching: boolean = false;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit {
   }
 
   private fetchPosts() {
+    this.isFetching = true;
     this.httpClient.get<{ [key: string]: Post }>(
       'https://angular-tuto-http-default-rtdb.europe-west1.firebasedatabase.app/posts.json'
     ).pipe(map(responseData => {
@@ -51,6 +53,7 @@ export class AppComponent implements OnInit {
       return postArray;
     }))
       .subscribe(posts => {
+        this.isFetching = false;
         this.loadedPosts = posts;
     });
   }
