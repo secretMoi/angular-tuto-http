@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Post} from "./post.model";
-import {map} from "rxjs/operators";
-import {Subject} from "rxjs";
+import {catchError, map} from "rxjs/operators";
+import {Subject, throwError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -25,17 +25,21 @@ export class PostService {
 
   fetchPosts() {
     return this.httpClient.get<{ [key: string]: Post }>(this.url)
-      .pipe(map(responseData => {
-        const postArray: Post[] = []; // transforme la réponse en tableau
-        for(const key in responseData) {
-          if(responseData.hasOwnProperty(key)) {
-            // pour chaque élément, crée un objet avec les mêmes données (clé/valeur) + rajoute l'id unique
-            postArray.push({ ...responseData[key], id: key });
+        .pipe(map(responseData => {
+          const postArray: Post[] = []; // transforme la réponse en tableau
+          for(const key in responseData) {
+            if(responseData.hasOwnProperty(key)) {
+              // pour chaque élément, crée un objet avec les mêmes données (clé/valeur) + rajoute l'id unique
+              postArray.push({ ...responseData[key], id: key });
+            }
           }
-        }
 
-        return postArray;
-    }));
+          return postArray;
+      }),
+        catchError(errorResponse => {
+          return throwError(errorResponse)
+        })
+      );
   }
 
   deletePosts() {
