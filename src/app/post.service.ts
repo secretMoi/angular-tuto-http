@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Post} from "./post.model";
 import {catchError, map} from "rxjs/operators";
 import {Subject, throwError} from "rxjs";
@@ -24,7 +24,10 @@ export class PostService {
   }
 
   fetchPosts() {
-    return this.httpClient.get<{ [key: string]: Post }>(this.url)
+    return this.httpClient.get<{ [key: string]: Post }>(this.url, {
+      headers: new HttpHeaders({
+        'Custom-Header': 'Hello'})
+    })
         .pipe(map(responseData => {
           const postArray: Post[] = []; // transforme la réponse en tableau
           for(const key in responseData) {
