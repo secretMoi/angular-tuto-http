@@ -34,4 +34,8 @@ export class PostService {
         return postArray;
     }));
   }
+
+  deletePosts() {
+    return this.httpClient.delete(this.url);
+  }
 }
