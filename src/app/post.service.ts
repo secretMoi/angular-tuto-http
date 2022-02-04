@@ -34,7 +34,8 @@ export class PostService {
       headers: new HttpHeaders({
         'Custom-Header': 'Hello'
       }),
-      params: searchParams
+      params: searchParams,
+      responseType: 'json'
     })
         .pipe(map(responseData => {
           const postArray: Post[] = []; // transforme la réponse en tableau
@@ -55,7 +56,8 @@ export class PostService {
 
   deletePosts() {
     return this.httpClient.delete(this.url, {
-      observe: 'events'
+      observe: 'events',
+      responseType: 'text'
     }).pipe(
       tap(
         event => {
